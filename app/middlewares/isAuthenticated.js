@@ -1,30 +1,23 @@
-const jwt = require('jsonwebtoken');
+import jwt from "jsonwebtoken";
 
-const isAuthenticated = (req, res, next) => {
-    const { authorization } = req.headers;
+export const isAuthenticated = (req, res, next) => {
+  const { authorization } = req.headers;
 
-    const [, token] = authorization.split(' ');
+  const [, token] = authorization.split(" ");
 
-    if (!token) {
-        return res.status(401).json({ error: 'Missing credentials.' })
+  if (!token) {
+    return res.status(401).json({ error: "Missing credentials." });
+  }
+
+  try {
+    const decodedToken = jwt.verify(token, process.env.HASH_AUTH_TOKEN);
+
+    if (!decodedToken.name || !decodedToken.email) {
+      throw new Error("Decoding error");
     }
 
-    try {
-        const decodedToken = jwt.verify(token, process.env.HASH_AUTH_TOKEN);
-        
-        if (
-            !decodedToken.name ||
-            !decodedToken.email
-        ) {
-            throw new Error('Decoding error');            
-        }
-
-        next();
-    } catch (error) {
-        return res.status(401).json({ error: error.message });
-    }
-}
-
-module.exports = {
-    isAuthenticated,
-}
+    next();
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+};

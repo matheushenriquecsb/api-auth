@@ -1,10 +1,8 @@
-const UserModel = require('../models/User');
+import UserModel from "../models/User.js";
 
 const getUsers = async (query) => {
-    const users = UserModel.find(query);
-    return users;
-}
-
-module.exports = {
-    getUsers,
+  const users = UserModel.find(query);
+  return users;
 };
+
+export default getUsers;
